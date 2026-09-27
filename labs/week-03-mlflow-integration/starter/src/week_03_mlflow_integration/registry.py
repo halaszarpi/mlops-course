@@ -213,8 +213,43 @@ def roll_back(
        now resolves to).
     Delete the Exercise 7 skip markers in tests/test_registry.py.
     """
-    _ = (settings, to_version, reason)  # silence unused-argument warnings until you implement
-    return None  # placeholder — the CLI reports this as "not implemented yet"
+    
+    client = MlflowClient(settings.mlflow_tracking_uri)
+    current_version = client.get_model_version_by_alias(
+        settings.registered_model_name,
+        settings.model_alias
+    )
+    
+    if current_version.version == to_version:
+        raise ValueError(f"Alias already points to version {to_version}.")
+    if not client.get_model_version(settings.registered_model_name, to_version).tags.get("promoted_at"):
+        raise ValueError(f"Version {to_version} has not been promoted; cannot roll back to it.")
+    
+    client.set_model_version_tag(
+        settings.registered_model_name,
+        current_version.version,
+        "rolled_back_at",
+        datetime.now(timezone.utc).isoformat(timespec="seconds")
+    )
+    client.set_model_version_tag(
+        settings.registered_model_name,
+        current_version.version,
+        "rolled_back_to",
+        to_version
+    )
+    client.set_model_version_tag(
+        settings.registered_model_name,
+        current_version.version,
+        "rollback_reason",
+        reason
+    )
+
+    client.set_registered_model_alias(settings.registered_model_name, settings.model_alias, to_version)
+    client.set_registered_model_alias(settings.registered_model_name, "champion", to_version)
+    
+    return (current_version.version, 
+            client.get_model_version_by_alias(settings.registered_model_name, settings.model_alias)
+    )
 
 
 def load_aliased_model(settings: Settings):
