@@ -1,0 +1,114 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: uv run python src/main.py prepare
+    deps:
+    - path: data/measurements.csv
+      hash: md5
+      md5: a8fd7b4f0d6d1bc4e378a8f76c5fff0c
+      size: 31750
+      isexec: true
+    - path: src/week_04_dvc_introduction/data.py
+      hash: md5
+      md5: 606163d966863769729be735252c1892
+      size: 2548
+      isexec: true
+    - path: src/week_04_dvc_introduction/pipeline.py
+      hash: md5
+      md5: ed974662805bb3980a921defb47b8094
+      size: 5821
+      isexec: true
+    params:
+      params.yaml:
+        prepare.test_size: 0.25
+        random_seed: 42
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: c0893fb60844c5f31b0f5b7c2e9df865
+      size: 8041
+      isexec: true
+    - path: data/processed/train.csv
+      hash: md5
+      md5: d9eba76cf921c13f5af2032d09a12f35
+      size: 23818
+      isexec: true
+  train:
+    cmd: uv run python src/main.py train
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: d9eba76cf921c13f5af2032d09a12f35
+      size: 23818
+      isexec: true
+    - path: src/week_04_dvc_introduction/data.py
+      hash: md5
+      md5: 606163d966863769729be735252c1892
+      size: 2548
+      isexec: true
+    - path: src/week_04_dvc_introduction/model.py
+      hash: md5
+      md5: e767ebc2aad69b95dbc8919c6bb21adb
+      size: 2406
+      isexec: true
+    - path: src/week_04_dvc_introduction/pipeline.py
+      hash: md5
+      md5: ed974662805bb3980a921defb47b8094
+      size: 5821
+      isexec: true
+    params:
+      params.yaml:
+        random_seed: 42
+        train.C: 0.1
+        train.family: logreg
+        train.max_iter: 1000
+    outs:
+    - path: models/mlflow_run_id.json
+      hash: md5
+      md5: b91f28408416a635c867f62334b97d9a
+      size: 82
+      isexec: true
+    - path: models/model.pkl
+      hash: md5
+      md5: 8e45e712915c74cd98206cd836dc8de0
+      size: 1937
+      isexec: true
+  evaluate:
+    cmd: uv run python src/main.py evaluate
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: c0893fb60844c5f31b0f5b7c2e9df865
+      size: 8041
+      isexec: true
+    - path: models/mlflow_run_id.json
+      hash: md5
+      md5: b91f28408416a635c867f62334b97d9a
+      size: 82
+      isexec: true
+    - path: models/model.pkl
+      hash: md5
+      md5: 8e45e712915c74cd98206cd836dc8de0
+      size: 1937
+      isexec: true
+    - path: src/week_04_dvc_introduction/data.py
+      hash: md5
+      md5: 606163d966863769729be735252c1892
+      size: 2548
+      isexec: true
+    - path: src/week_04_dvc_introduction/model.py
+      hash: md5
+      md5: e767ebc2aad69b95dbc8919c6bb21adb
+      size: 2406
+      isexec: true
+    - path: src/week_04_dvc_introduction/pipeline.py
+      hash: md5
+      md5: ed974662805bb3980a921defb47b8094
+      size: 5821
+      isexec: true
+    outs:
+    - path: metrics/metrics.json
+      hash: md5
+      md5: 08b86f75172003dbe403c0017b60ffa2
+      size: 105
+      isexec: true
