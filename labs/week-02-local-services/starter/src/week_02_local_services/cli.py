@@ -80,7 +80,7 @@ def main() -> None:
     # Placeholder — runs without MLflow so pytest passes before Exercise 3:
     model = train_logistic_regression(x_train, y_train, settings)
     metrics = evaluate_model(model, x_test, y_test)
-    print("Logistic Regression metrics (not yet tracked):")
+    print("Logistic Regression metrics:")
     print(json.dumps(metrics, indent=2))
     print()
-    print("Complete Exercise 3 to log this run to MLflow.")
+    print("This run is not tracked yet (Exercise 3).")
