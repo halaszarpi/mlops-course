@@ -1,0 +1,164 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: uv run python src/main.py prepare
+    deps:
+    - path: data/measurements.csv
+      hash: md5
+      md5: a8fd7b4f0d6d1bc4e378a8f76c5fff0c
+      size: 31750
+      isexec: true
+    - path: reports/validation.json
+      hash: md5
+      md5: f6a19121be09e136b250a34fd1c7ebf4
+      size: 548
+      isexec: true
+    - path: src/week_05_data_validation/data.py
+      hash: md5
+      md5: 806c1d095b2ad65031748a4fe78f177a
+      size: 2494
+      isexec: true
+    - path: src/week_05_data_validation/pipeline.py
+      hash: md5
+      md5: 0cdd2f5300c2741d3deba44775687675
+      size: 9261
+      isexec: true
+    params:
+      params.yaml:
+        prepare.test_size: 0.25
+        random_seed: 42
+    outs:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: c0893fb60844c5f31b0f5b7c2e9df865
+      size: 8041
+      isexec: true
+    - path: data/processed/train.csv
+      hash: md5
+      md5: d9eba76cf921c13f5af2032d09a12f35
+      size: 23818
+      isexec: true
+  train:
+    cmd: uv run python src/main.py train
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: d9eba76cf921c13f5af2032d09a12f35
+      size: 23818
+      isexec: true
+    - path: src/week_05_data_validation/dvc_link.py
+      hash: md5
+      md5: 37149c6ca3e9a0b9c1b51c21c27c62c3
+      size: 3250
+      isexec: true
+    - path: src/week_05_data_validation/model.py
+      hash: md5
+      md5: c3e4c3fdaaf5d4fe96e10138cadebc97
+      size: 3122
+      isexec: true
+    - path: src/week_05_data_validation/pipeline.py
+      hash: md5
+      md5: 0cdd2f5300c2741d3deba44775687675
+      size: 9261
+      isexec: true
+    - path: src/week_05_data_validation/schemas.py
+      hash: md5
+      md5: 9b17a2f7882b4d808ed7d6af466b6638
+      size: 4606
+      isexec: true
+    - path: src/week_05_data_validation/validation.py
+      hash: md5
+      md5: 7e8db2f0e7c6ef498f5108dc6a5e565c
+      size: 6011
+      isexec: true
+    params:
+      params.yaml:
+        random_seed: 42
+        train.C: 1.0
+        train.family: logreg
+        train.impute_strategy: median
+        train.max_iter: 1000
+    outs:
+    - path: models/mlflow_run_id.json
+      hash: md5
+      md5: 6ef9862ddef4f61fdfa64027e094a992
+      size: 82
+      isexec: true
+    - path: models/model.pkl
+      hash: md5
+      md5: e1777109016ab4292f95927ed9827194
+      size: 2273
+      isexec: true
+  evaluate:
+    cmd: uv run python src/main.py evaluate
+    deps:
+    - path: data/processed/test.csv
+      hash: md5
+      md5: c0893fb60844c5f31b0f5b7c2e9df865
+      size: 8041
+      isexec: true
+    - path: models/mlflow_run_id.json
+      hash: md5
+      md5: 6ef9862ddef4f61fdfa64027e094a992
+      size: 82
+      isexec: true
+    - path: models/model.pkl
+      hash: md5
+      md5: e1777109016ab4292f95927ed9827194
+      size: 2273
+      isexec: true
+    - path: src/week_05_data_validation/model.py
+      hash: md5
+      md5: c3e4c3fdaaf5d4fe96e10138cadebc97
+      size: 3122
+      isexec: true
+    - path: src/week_05_data_validation/pipeline.py
+      hash: md5
+      md5: 0cdd2f5300c2741d3deba44775687675
+      size: 9261
+      isexec: true
+    - path: src/week_05_data_validation/schemas.py
+      hash: md5
+      md5: 9b17a2f7882b4d808ed7d6af466b6638
+      size: 4606
+      isexec: true
+    - path: src/week_05_data_validation/validation.py
+      hash: md5
+      md5: 7e8db2f0e7c6ef498f5108dc6a5e565c
+      size: 6011
+      isexec: true
+    outs:
+    - path: metrics/metrics.json
+      hash: md5
+      md5: 6a5f49039d799a608192bdbccb853a27
+      size: 105
+      isexec: true
+  validate:
+    cmd: uv run python src/main.py validate
+    deps:
+    - path: data/measurements.csv
+      hash: md5
+      md5: a8fd7b4f0d6d1bc4e378a8f76c5fff0c
+      size: 31750
+      isexec: true
+    - path: src/week_05_data_validation/pipeline.py
+      hash: md5
+      md5: 0cdd2f5300c2741d3deba44775687675
+      size: 9261
+      isexec: true
+    - path: src/week_05_data_validation/schemas.py
+      hash: md5
+      md5: 9b17a2f7882b4d808ed7d6af466b6638
+      size: 4606
+      isexec: true
+    - path: src/week_05_data_validation/validation.py
+      hash: md5
+      md5: 7e8db2f0e7c6ef498f5108dc6a5e565c
+      size: 6011
+      isexec: true
+    outs:
+    - path: reports/validation.json
+      hash: md5
+      md5: f6a19121be09e136b250a34fd1c7ebf4
+      size: 548
+      isexec: true

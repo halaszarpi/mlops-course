@@ -47,6 +47,7 @@ def validate_frame(frame: pd.DataFrame, schema, source: str = "") -> dict:
         "by_check": {},
         "by_column": {},
     }
+    
     # TODO(student) Exercise 1: write a try/except block.
     #   - try: check `frame` against `schema` in lazy mode, so that every failure
     #     is collected, not only the first.
@@ -54,7 +55,12 @@ def validate_frame(frame: pd.DataFrame, schema, source: str = "") -> dict:
     #     `failure_cases` table to `_add_failures`.
     # After the block, return `report`.
     # Reference: https://pandera.readthedocs.io/en/stable/lazy_validation.html
-    raise NotImplementedError("validate_frame is not written yet (Exercise 1).")
+    
+    try:
+        schema.validate(frame, lazy=True)
+    except pa.errors.SchemaErrors as e:
+        _add_failures(report, e.failure_cases)
+    return report
 
 
 def _add_failures(report: dict, cases: pd.DataFrame) -> None:
@@ -94,6 +100,10 @@ def to_nullable(frame: pd.DataFrame) -> pd.DataFrame:
     # TODO(student) Exercise 3: in each of the SENTINEL_COLUMNS that `converted`
     # has, change the column to the nullable type "Float64" and replace 0 with
     # pd.NA. Leave every other column as it is.
+    for col in converted.columns:
+        if col in SENTINEL_COLUMNS:
+            converted[col] = converted[col].astype("Float64").replace(0, pd.NA)
+    
     return converted
 
 
