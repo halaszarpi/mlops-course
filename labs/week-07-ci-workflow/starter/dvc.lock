@@ -63,26 +63,32 @@ stages:
       hash: md5
       md5: d9eba76cf921c13f5af2032d09a12f35
       size: 23818
+      isexec: true
     - path: src/week_07_ci_workflow/dvc_link.py
       hash: md5
       md5: b6aa278328a2024ae1398178c96031e7
       size: 2430
+      isexec: true
     - path: src/week_07_ci_workflow/model.py
       hash: md5
       md5: 48c407d92c00098145b1bf4a4849ea18
       size: 3089
+      isexec: true
     - path: src/week_07_ci_workflow/pipeline.py
       hash: md5
       md5: 787cd5c2a356624c95d09bfcd6a9b2c0
       size: 14596
+      isexec: true
     - path: src/week_07_ci_workflow/schemas.py
       hash: md5
       md5: 02731af6c6138f3d3a6fe3e4ab878667
       size: 4483
+      isexec: true
     - path: src/week_07_ci_workflow/validation.py
       hash: md5
       md5: d8f77f2ca7a4998aad7ce340c3780f73
       size: 5587
+      isexec: true
     params:
       params.yaml:
         random_seed: 42
@@ -96,10 +102,12 @@ stages:
       hash: md5
       md5: d8d778c02be5e47c081a930102210531
       size: 46
+      isexec: true
     - path: models/model.pkl
       hash: md5
-      md5: f6f7d2832bfbd795008dfc54b4be0347
+      md5: e1777109016ab4292f95927ed9827194
       size: 2273
+      isexec: true
   evaluate:
     cmd: uv run python src/main.py evaluate
     deps:
@@ -107,38 +115,47 @@ stages:
       hash: md5
       md5: c0893fb60844c5f31b0f5b7c2e9df865
       size: 8041
+      isexec: true
     - path: models/mlflow_run_id.json
       hash: md5
       md5: d8d778c02be5e47c081a930102210531
       size: 46
+      isexec: true
     - path: models/model.pkl
       hash: md5
-      md5: f6f7d2832bfbd795008dfc54b4be0347
+      md5: e1777109016ab4292f95927ed9827194
       size: 2273
+      isexec: true
     - path: src/week_07_ci_workflow/evaluation.py
       hash: md5
       md5: c649c1f3489f219c75c96739c162e298
       size: 8151
+      isexec: true
     - path: src/week_07_ci_workflow/fairness.py
       hash: md5
       md5: 70b661f14b99ac29c2b0e85316bbe9f9
       size: 5261
+      isexec: true
     - path: src/week_07_ci_workflow/model.py
       hash: md5
       md5: 48c407d92c00098145b1bf4a4849ea18
       size: 3089
+      isexec: true
     - path: src/week_07_ci_workflow/pipeline.py
       hash: md5
       md5: 787cd5c2a356624c95d09bfcd6a9b2c0
       size: 14596
+      isexec: true
     - path: src/week_07_ci_workflow/schemas.py
       hash: md5
       md5: 02731af6c6138f3d3a6fe3e4ab878667
       size: 4483
+      isexec: true
     - path: src/week_07_ci_workflow/validation.py
       hash: md5
       md5: d8f77f2ca7a4998aad7ce340c3780f73
       size: 5587
+      isexec: true
     params:
       params.yaml:
         evaluation:
@@ -182,10 +199,12 @@ stages:
       hash: md5
       md5: 6a5f49039d799a608192bdbccb853a27
       size: 105
+      isexec: true
     - path: metrics/slices.json
       hash: md5
       md5: 638d4ebe56c881bedc2491b27dbf9aa2
       size: 4975
+      isexec: true
   gate:
     cmd: uv run python src/main.py gate
     deps:
@@ -193,30 +212,37 @@ stages:
       hash: md5
       md5: 20a2ddf457de05236fc2eb7371d6ddc7
       size: 253
+      isexec: true
     - path: metrics/metrics.json
       hash: md5
       md5: 6a5f49039d799a608192bdbccb853a27
       size: 105
+      isexec: true
     - path: metrics/slices.json
       hash: md5
       md5: 638d4ebe56c881bedc2491b27dbf9aa2
       size: 4975
+      isexec: true
     - path: models/mlflow_run_id.json
       hash: md5
       md5: d8d778c02be5e47c081a930102210531
       size: 46
+      isexec: true
     - path: src/week_07_ci_workflow/baseline.py
       hash: md5
       md5: ab462611567c55570212eadeb34e2403
       size: 3539
+      isexec: true
     - path: src/week_07_ci_workflow/gates.py
       hash: md5
       md5: 8fd66c93f6de728af6380b5fbb4beffb
       size: 14753
+      isexec: true
     - path: src/week_07_ci_workflow/pipeline.py
       hash: md5
       md5: 787cd5c2a356624c95d09bfcd6a9b2c0
       size: 14596
+      isexec: true
     params:
       params.yaml:
         acceptance:
@@ -247,3 +273,4 @@ stages:
       hash: md5
       md5: da3611123490dfb22051cde40a260498
       size: 4706
+      isexec: true
