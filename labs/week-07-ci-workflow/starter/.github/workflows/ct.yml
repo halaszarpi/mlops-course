@@ -21,12 +21,68 @@
 name: Week 7 CT
 
 on:
+  schedule:
+    - cron: "0 2 * * 1"
   workflow_dispatch:
+    inputs:
+      reason:
+        description: "Why retrain now? (e.g. new batch arrived, drift suspected)"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: labs/week-07-ci-workflow/starter
+
+env:
+  LAB_DIR: labs/week-07-ci-workflow/starter
 
 jobs:
-  todo:
+  retrain:
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "ct.yml is not written yet (Exercise 5)."
-          exit 1
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+      - name: Install all groups
+        run: make sync
+
+      - name: Why this run happened
+        env:
+          TRIGGER: ${{ github.event_name }}
+          REASON: ${{ inputs.reason || 'scheduled retrain' }}
+        run: |
+          echo "Trigger: $TRIGGER"
+          echo "Reason:  $REASON"
+          {
+            echo "### Why this run happened"
+            echo "- Trigger: \`$TRIGGER\`"
+            echo "- Reason: $REASON"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Rebuild the dataset
+        run: make data-v2
+
+      - name: retrain and gate
+        run: make ct-local
+
+      - name: Publish the gate verdict to the job summary
+        if: always()
+        run: make gate-summary >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Annotate a NO-GO
+        if: failure()
+        run: echo "::error title=NO-GO::The retrained model did not pass the gate. Read the job summary and the uploaded reports."
+
+      - name: Upload the evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ct-evidence-${{ github.run_id }}
+          path: |
+            ${{ env.LAB_DIR }}/metrics/
+            ${{ env.LAB_DIR }}/reports/
+            ${{ env.LAB_DIR }}/models/model.pkl
+          if-no-files-found: warn
