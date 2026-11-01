@@ -81,6 +81,7 @@ def training_flow(
     # try/except, notify with the error, and re-raise. A flow that only
     # reports its successes is the Toy Story 2 backup with extra steps.
     #
+    
     # TODO(student) Exercise 4 — record the parameters, and refuse
     # uncommitted ones when asked.
     #
@@ -89,8 +90,34 @@ def training_flow(
     # raise a RuntimeError that says how to fix it. After the pipeline, read
     # the values train used with `read_params_used`, and pass them and the
     # commit state to `notify` (see its signature in tasks.py).
-    print("training_flow is not implemented yet — see the TODO in flows.py (Exercise 1).")
-    return {}
+
+    settings = load_settings()
+    verdict: dict = {}
+    params: dict | None = None
+    committed: bool | None = None
+    
+    try:
+        committed = params_committed(settings)
+        if require_committed_params and not committed:
+            raise RuntimeError(
+                "params.yaml has uncommitted changes, and this run requires "
+                "committed parameters. Commit the change (git commit params.yaml) "
+                "or undo it (git restore params.yaml), then run again."
+            )
+        build_dataset(settings)
+        verdict = run_pipeline(settings)
+        params = read_params_used(settings)
+        if push:
+            push_data(settings)
+        if register_model_version:
+            register_model(settings)
+    except Exception as error:
+        notify(settings, verdict, error=str(error))
+        raise
+
+    notify(settings, verdict, params=params, committed=committed)
+    return verdict
+
 
 
 @flow(name="diabetes-training-with-pull", log_prints=True)
@@ -119,5 +146,11 @@ def scheduled_flow() -> dict:
     #
     # Do NOT register or promote here, and be ready to say why in a sentence
     # that is not about credentials.
-    print("scheduled_flow is not implemented yet — see the TODO in flows.py (Exercise 5).")
-    return {}
+
+    settings = load_settings()
+    pull_data(settings)
+    return training_flow(
+        require_committed_params=True,
+        push=False,
+        register_model_version=False
+    )
