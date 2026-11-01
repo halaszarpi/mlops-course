@@ -1,3 +1,6 @@
+Scheduled run: brown-earthworm
+Final state: Completed
+
 # Exercise 2
 
 ## Q1
